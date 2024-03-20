@@ -1,133 +1,80 @@
-// Handle clicks
-
 import { useState } from "react";
 
-const Heading = (props) => {
-  // console.log("recieved this data:...", props);
-  return <h1>{props.text}</h1>;
-};
-
-const Button = (props) => {
-  // console.log("recieved this data:...", props);
-  return <button onClick={props.handleClick}>{props.text}</button>;
-};
-
-const Content = (props) => {
-  const { text, count } = props;
+const Heading = ({ heading }) => {
   return (
-    <p>
-      {text} {count}
-    </p>
+    <div>
+      <h1>{heading}</h1>
+    </div>
   );
 };
 
-const Positive = (props) => {
-  const { selected, good, neutral, bad } = props;
-  const totalFeedback = good + neutral + bad;
+// const Button = ({ handleGenerateRandom, handleVote, text }) => {
+//   console.log(handleGenerateRandom, text);
 
-  if (totalFeedback === 0) {
-    return <p>No Feedack given yet.</p>;
-  }
-
-  return selected === "good" ? (
-    <p>Good:{((good / totalFeedback) * 100).toFixed(2)} % </p>
-  ) : selected === "neutral" ? (
-    <p>Neutral: {((neutral / totalFeedback) * 100).toFixed(2)}%</p>
-  ) : (
-    <p>Bad: {((bad / totalFeedback) * 100).toFixed(2)}%</p>
-  );
-};
+//   return (
+//     <div>
+//       <button onClick={handleGenerateRandom}>{text}</button>
+//     </div>
+//   );
+// };
 
 const App = () => {
-  const [good, setGood] = useState(0);
-  const [neutral, setNeutral] = useState(0);
-  const [bad, setBad] = useState(0);
-  const [total, setTotal] = useState(0);
-  const [positive, setPositive] = useState(false);
-  const [selected, setSelected] = useState(null);
+  const anecdotes = [
+    "If it hurts, do it more often.",
+    "Adding manpower to a late software project makes it later!",
+    "The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
+    "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
+    "Premature optimization is the root of all evil.",
+    "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
+    "Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.",
+    "The only way to go fast, is to go well.",
+  ];
 
-  const handleGood = () => {
-    setGood((prevGood) => prevGood + 1);
-    setTotal((prevTotal) => prevTotal + 1);
-    setPositive(true);
-    setSelected("good");
+  const [selected, setSelected] = useState(0);
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0));
+
+  // click on the button and randomly retrieve next anecdote
+  const handleGenerateRandom = () => {
+    // console.log("You will get next anectdote");
+    const anecdotePosition = Math.floor(Math.random() * anecdotes.length);
+    setSelected(anecdotePosition);
+    // console.log(selected);
   };
 
-  const handleNeutral = () => {
-    setNeutral((prevNeutral) => prevNeutral + 1);
-    setTotal((prevTotal) => prevTotal + 1);
-    setPositive(true);
-    setSelected("neutral");
+  const handleVote = () => {
+    const newVotes = [...votes];
+    newVotes[selected] += 1;
+    setVotes(newVotes);
+    // console.log(votes);
   };
 
-  const handleBad = () => {
-    setBad((prevBad) => prevBad + 1);
-    setTotal((prevTotal) => prevTotal + 1);
-    setPositive(true);
-    setSelected("bad");
-  };
+  const highestVote = Math.max(...votes);
 
-  // Calculate average and positive
+  // console.log(highestVote);
 
-  const average = ((good + neutral + bad) / 3).toFixed(2);
-
-  // setTotal(good + bad + neutral)
 
   return (
     <>
-      <Heading text="give feedback" />
-      <Button handleClick={handleGood} text="good" />
-      <Button handleClick={handleNeutral} text="neutral" />
-      <Button handleClick={handleBad} text="bad" />
-      <Heading text="statistics" />
-      <table>
-        <tbody>
-          <tr>
-            <td>Good</td>
-            <td>
-              <Content count={good} />
-            </td>
-          </tr>
-          <tr>
-            <td>Neutral</td>
-            <td>
-              <Content count={neutral} />
-            </td>
-          </tr>
-          <tr>
-            <td>Bad</td>
-            <td>
-              <Content count={bad} />
-            </td>
-          </tr>
-          <tr>
-            <td>All</td>
-            <td>
-              <Content count={total} />
-            </td>
-          </tr>
-          <tr>
-            <td>Average</td>
-            <td>
-              <Content count={average} />
-            </td>
-          </tr>
-          <tr>
-            <td>Positive</td>
-            <td>
-              <Positive
-                selected={selected}
-                good={good}
-                neutral={neutral}
-                bad={bad}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div>
+        <Heading heading="Anecdote of the day" />
+        {anecdotes[selected]}
+        <div>Selected anecdote has {votes[selected]} votes.</div>
+      </div>
+      <div>
+        <button onClick={handleVote}>vote</button>
+        <button onClick={handleGenerateRandom}>next anecdote</button>
+      </div>
+      <div>
+        <Heading heading="Anecdote with most votes" />
+        {highestVote > 0
+          ? anecdotes[votes.indexOf(highestVote)]
+          : "No voting has been done"}
+        <div>
+          {highestVote > 0 && `The anecdote has ${votes[selected]} votes.`}
+        </div>
+      </div>
     </>
   );
 };
-
 
 export default App;
