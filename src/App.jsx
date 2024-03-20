@@ -26,20 +26,30 @@ const Positive = (props) => {
   const { selected, good, neutral, bad } = props;
   const totalFeedback = good + neutral + bad;
 
-  if (totalFeedback === 0) {
-    return <p>No contribution calculated yet</p>;
-  } else if (selected === "good") {
-    return <p>Good:{((good / totalFeedback) * 100).toFixed(2)} %</p>;
-  } else if (selected === "neutral") {
-    return <p>Neutral: {((neutral / totalFeedback) * 100).toFixed(2)}%</p>;
-  } else if (selected === "bad") {
-    return (
-      <div>
-        <p>Bad: {((bad / totalFeedback) * 100).toFixed(2)}%</p>
-      </div>
+  // if (totalFeedback === 0) {
+  //   return <p>No contribution calculated yet</p>;
+  // } else if (selected === "good") {
+  //   return <p>Good:{((good / totalFeedback) * 100).toFixed(2)} %</p>;
+  // } else if (selected === "neutral") {
+  //   return <p>Neutral: {((neutral / totalFeedback) * 100).toFixed(2)}%</p>;
+  // } else if (selected === "bad") {
+  //   return (
+  //     <div>
+  //       <p>Bad: {((bad / totalFeedback) * 100).toFixed(2)}%</p>
+  //     </div>
+  //   );
+
+    if (totalFeedback === 0) {
+      return <p>No Feedack given yet.</p>
+    }
+
+    return(
+      selected === "good" ? <p>Good:{((good / totalFeedback) * 100).toFixed(2)} % </p> 
+      : selected === "neutral" ? <p>Neutral: {((neutral / totalFeedback) * 100).toFixed(2)}%</p>
+      : <p>Bad: {((bad / totalFeedback) * 100).toFixed(2)}%</p>
     );
   }
-};
+
 
 const App = () => {
   const [good, setGood] = useState(0);
